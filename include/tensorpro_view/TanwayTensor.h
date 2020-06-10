@@ -1,6 +1,5 @@
 /************************************************
- *  Copyright (C) 2020 Tanway Technology Co., Ltd
- *  License:　BSD 3-Clause License
+ *  Copyright (C) 2019 Tanway Technology
  *
  *  Created on: 16-07-2019
  *  Edited on: 21-12-2019
@@ -43,9 +42,17 @@ public:
 
   virtual ~TanwayTensor();
 
+  /* Origin verticalChannels
   double verticalChannels[16] = { -5.274283f, -4.574258f,
  -3.872861f, -3.1703f, -2.466783f, -1.762521f, -1.057726f, -0.352611f, 0.352611f,
  1.057726f, 1.762521f, 2.466783f, 3.1703f, 3.872861f, 4.574258f, 5.274283f};
+  */
+
+  //verticalChannels 15 <-> 11/16 <-> 12
+  double verticalChannels[16] = { -5.274283f, -4.574258f,
+ -3.872861f, -3.1703f, -2.466783f, -1.762521f, -1.057726f, -0.352611f, 0.352611f,
+ 1.057726f, 4.574258f, 5.274283f, 3.1703f, 3.872861f, 1.762521f, 2.466783f}; //change for test 
+ 
 
   double RA = 0.01745329;//deg to rad. 180/pi
   double c = 2.997924;
@@ -112,16 +119,11 @@ public:
   virtual bool processXYZ(float horizontalAngle,int offset);
 
   /** 
-  *  @brief fill attributions of Cloud.
-  */
-  bool fillCloudAttr();
-
-  /** 
   *  @brief Publish point cloud data when conditions are met.
   *
   *  @param point_cloud_ptr Pointer to store point clouds.
   */
-  virtual bool publishCloud();
+  bool publishCloud();
   
   /** 
   *  @brief Print timestamps.
@@ -131,12 +133,9 @@ public:
   bool printTimeStamps(int offset);
 
   /** 
-  *  @brief Recieve UDP date.
-    */
-  bool getUDP();
-
-  /** 
-  *  @brief Parse UDP date to get points.
+  *  @brief Recieve UDP date and parse to get points.
+  *
+  *  @param point_cloud_ptr Pointer to store point clouds.
   */
   bool getPoints();
 

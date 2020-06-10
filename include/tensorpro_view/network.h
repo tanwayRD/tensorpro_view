@@ -1,6 +1,5 @@
 /************************************************
- *  Copyright (C) 2020 Tanway Technology Co., Ltd
- *  License:　BSD 3-Clause License
+ *  Copyright (C) 2019 Tanway Technology
  *
  *  Created on: 16-07-2019
  *  Author: Elodie Shan

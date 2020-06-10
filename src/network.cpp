@@ -1,10 +1,10 @@
 /************************************************
- *  Copyright (C) 2020 Tanway Technology Co., Ltd
- *  License:　BSD 3-Clause License
+ *  Copyright (C) 2019 Tanway Technology
  *
  *  Created on: 16-07-2019
  *  Edited on: 25-03-2020
  *  Author: Elodie Shan
+ *  Editer: Elodie Shan
  *
  *  UDP interface for Tanway Tensor 3D LIDARs
 **************************************************/
@@ -31,6 +31,7 @@ bool UDPNetwork::Init(std::string host_, int port_, std::string LiDARhost_, int 
   saddr.sin_addr.s_addr = inet_addr(host.data());//Convert between the binary IP address of the 32-bit network byte and the dotted decimal IP address
 
   ret = bind(sockfd,(struct sockaddr*)&saddr,sizeof(saddr)); //Assign a local name to an unnamed socket to establish a local bundle (host address/port number) for the socket.
+
   if(ret < 0) 
   {
     perror("bind fail!");
@@ -38,6 +39,7 @@ bool UDPNetwork::Init(std::string host_, int port_, std::string LiDARhost_, int 
   }
 
   bool status = ConnectValid() && SourceValid();
+
   if (status)
     ROS_INFO("Connect with LiDAR !");
 
@@ -53,6 +55,7 @@ bool UDPNetwork::ConnectValid()
   FD_SET(sockfd,&readfds);
   struct timeval RECV_TIMEOUT;
   RECV_TIMEOUT.tv_sec = 10;
+
   while(select(sockfd+1,&readfds,NULL,NULL,&RECV_TIMEOUT)==0)//Listening to the state of the socket
   {
     if (RECV_TIMEOUT_COUNT == 5)

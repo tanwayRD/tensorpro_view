@@ -1,11 +1,11 @@
 /************************************************
- *  Copyright (C) 2020 Tanway Technology Co., Ltd
- *  License:　BSD 3-Clause License
+ *  Copyright (C) 2019 Tanway Technology
  *
  *  Created on: 16-07-2019
- *  Edited on: 31-05-2020
+ *  Edited on: 21-02-2020
  *  Author: Elodie Shan
  *  Editor: LF Shen
+ *  Editor: Elodie Shan
 
  *  Node for Tanway Tensor 3D LIDARs   
  *  Function: 20lines one bag-->switch:cout flag state
@@ -68,7 +68,7 @@ PointT TanwayTensor::getBasicPoint(double x, double y, double z, float pulsewidt
   basic_point.x = x;
   basic_point.y = y;
   basic_point.z = z;
-  basic_point.pulsewidth = pulsewidth;
+  basic_point.width = pulsewidth;
   return basic_point;
 }
 
@@ -97,8 +97,6 @@ bool TanwayTensor::processXYZ(float horizontalAngle, int offset)
 
     //Calculate the coordinate values
     float pulsewidth = TwoHextoInt(buf[offset+seq*4+2], buf[offset+seq*4+3]);
-    pulsewidth = pulsewidth*500*c/10.f/16384.f/2;
-
     float x = L * cos_vA_RA * cos_hA_RA;
     float y = L * cos_vA_RA * sin_hA_RA;
     float z = L * sin(vA * RA);
@@ -109,19 +107,13 @@ bool TanwayTensor::processXYZ(float horizontalAngle, int offset)
   return true;
 }
 
-bool TanwayTensor::fillCloudAttr()
+bool TanwayTensor::publishCloud()
 {
   point_cloud_ptr->width = (int) point_cloud_ptr->points.size(); //Number of points in one frame
   point_cloud_ptr->height = 1; // Whether the point cloud is orderly, 1 is disordered
   point_cloud_ptr->header.frame_id = frame_id; //Point cloud coordinate system name
   ROS_DEBUG( "Publish   num: [%d]",(int) point_cloud_ptr->points.size());
-  return true;
-}
 
-bool TanwayTensor::publishCloud()
-{
-  fillCloudAttr();
-  
   pcl::toROSMsg(*point_cloud_ptr, ros_cloud); //convert between PCL and ROS datatypes
   ros_cloud.header.stamp = ros::Time::now(); //Get ROS system time
   pubCloud.publish(ros_cloud); //Publish cloud
@@ -154,16 +146,10 @@ bool TanwayTensor::printTimeStamps(int offset){
   return true; 
 }
 
-bool TanwayTensor::getUDP(){
+bool TanwayTensor::getPoints(){
   if (UDP_.recvUDP(buf) < 0) //Recieve UDP packets
     return false;
-  
-  bool status = getPoints();
-  return status;
-}
 
-
-bool TanwayTensor::getPoints(){
   int blocks_num = 0;
 
   while (blocks_num < 20) 
@@ -175,6 +161,7 @@ bool TanwayTensor::getPoints(){
 
     int HextoAngle = FourHexToInt(buf[offset+64],buf[offset+65],buf[offset+66],buf[offset+67]);
     float horizontalAngle = getHorizontalAngle(HextoAngle);
+
     if(horizontalAngle>=StartAngle && horizontalAngle<=EndAngle)
     {
       needPublishCloud = true;
