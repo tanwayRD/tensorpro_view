@@ -35,13 +35,16 @@ public:
   int LiDARport;
 
   // @brief Initialize　some settings.
-  bool Init(std::string host_, int port_, std::string LiDARhost_, int LiDARport_);
+  bool Init(std::string host_, int port_, std::string LiDARhost_, int LiDARport_, bool DualEcho_switch);
 
   // @brief Verify that the connection  is successful.
   bool ConnectValid();
 
   // @brief Verify that the data source is correct.
   bool SourceValid();
+
+    // @brief send UDP to LiDAR to set echo mode.
+  bool setLiDARMode(bool DualEcho_switch);
 
   // @brief Get the UDP data.
   int recvUDP(char* buf);

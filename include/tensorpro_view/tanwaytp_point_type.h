@@ -5,7 +5,8 @@
 struct Tanway_TP_Point
 {
   PCL_ADD_POINT4D;
-  float pulsewidth;
+  float width;
+  float echo;
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW
 } EIGEN_ALIGN16;
 
@@ -14,5 +15,6 @@ POINT_CLOUD_REGISTER_POINT_STRUCT(Tanway_TP_Point,
                                   (float, x, x)
                                   (float, y, y)
                                   (float, z, z)
-                                  (float, pulsewidth, pulsewidth)
+                                  (float, width, width)
+                                  (float, echo, echo)
                                  )

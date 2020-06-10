@@ -14,8 +14,6 @@
 #include <ros/console.h>
 #include "tensorpro_view/TanwayTensor.h"
 
-
-
 int main(int argc, char** argv) {
   ros::init(argc, argv, "tensorproview"); 
   ros::NodeHandle nh;
@@ -25,21 +23,19 @@ int main(int argc, char** argv) {
 
 
   ROS_INFO( "tensorpro viewer for ROS" );
-  ROS_INFO( "Version 1.1.5" );
-  ROS_INFO( "Update Date: 2020/06/01\n" );
+  ROS_INFO( "Version 1.1.2" );
+  ROS_INFO( "Update Date: 2020/04/16\n" );
 
   ROS_INFO( "View in rviz;");
   ROS_INFO( "topic= tensorpro_cloud and fixed frame= TanwayTP");
 
   TanwayTensor TensorPro;
+
   if (!TensorPro.initialize(nh,nh_private))
-  {
-    ros::shutdown();
     return 0;
-  }
 
   while (ros::ok()){
-    TensorPro.getUDP();
+    TensorPro.getPoints();
   }
   return 0;
 }

@@ -18,7 +18,7 @@ UDPNetwork::UDPNetwork(){};
 
 UDPNetwork::~UDPNetwork(){};
 
-bool UDPNetwork::Init(std::string host_, int port_, std::string LiDARhost_, int LiDARport_)
+bool UDPNetwork::Init(std::string host_, int port_, std::string LiDARhost_, int LiDARport_, bool DualEcho_switch)
 {
   host = host_;
   port = port_;
@@ -31,13 +31,15 @@ bool UDPNetwork::Init(std::string host_, int port_, std::string LiDARhost_, int 
   saddr.sin_addr.s_addr = inet_addr(host.data());//Convert between the binary IP address of the 32-bit network byte and the dotted decimal IP address
 
   ret = bind(sockfd,(struct sockaddr*)&saddr,sizeof(saddr)); //Assign a local name to an unnamed socket to establish a local bundle (host address/port number) for the socket.
+
   if(ret < 0) 
   {
     perror("bind fail!");
     return false;
   }
 
-  bool status = ConnectValid() && SourceValid();
+  bool status = ConnectValid() && SourceValid() && setLiDARMode(DualEcho_switch) && ConnectValid();
+
   if (status)
     ROS_INFO("Connect with LiDAR !");
 
@@ -53,6 +55,7 @@ bool UDPNetwork::ConnectValid()
   FD_SET(sockfd,&readfds);
   struct timeval RECV_TIMEOUT;
   RECV_TIMEOUT.tv_sec = 10;
+
   while(select(sockfd+1,&readfds,NULL,NULL,&RECV_TIMEOUT)==0)//Listening to the state of the socket
   {
     if (RECV_TIMEOUT_COUNT == 5)
@@ -82,6 +85,29 @@ bool UDPNetwork::SourceValid()
     ROS_ERROR("Please check the LiDAR or the config file!");
     return false; 
   }
+  return true;
+}
+
+bool UDPNetwork::setLiDARMode(bool DualEcho_switch)
+{
+  std::string EchoMode = "Single";
+  // Single echo mode and single mirror mode by default
+  unsigned char send_buf[16]={0x01,0xFE,0xFE,0xFE,0xC1,0xC1,0xFE,0xFE,0xFE,0xFE,0xFE,0xFE,0xD1,0xD1,0xFE,0xFE};
+
+  if (DualEcho_switch) //Single Echo Mode
+  {
+    send_buf[0] = 0x02;
+    EchoMode = "Dual";
+  }
+  ret = sendto(sockfd, (const char*)send_buf, 16, 0, (struct sockaddr *)&caddr, sizeof(caddr));
+
+  if(ret < 0)  
+  {  
+    ROS_ERROR("Failed to set Lidar's work mode!");
+    return false;
+  }
+  
+  ROS_INFO("Set LiDAR(%s:%d) in %s Echo Mode!",(char *)inet_ntoa(caddr.sin_addr),htons(caddr.sin_port),EchoMode.data());
   return true;
 }
 

@@ -54,6 +54,7 @@ public:
   std::string LiDARhost = "192.168.111.51" ;
   std::string frame_id = "TanwayTP" ;
   std::string topic = "/tensorpro_cloud" ;
+  bool DualEcho_switch = false;
 
   int port = 5600;
   int LiDARport = 5050;
@@ -100,8 +101,9 @@ public:
   *  @param y
   *  @param z
   *  @param pulsewidth
+  *  @param echo
   */
-  PointT getBasicPoint(double x, double y, double z, float pulsewidth);
+  PointT getBasicPoint(double x, double y, double z, float pulsewidth, int echo);
 
   /** 
   *  @brief Parse the UDP packet and calculate the coordinate values.
@@ -109,19 +111,14 @@ public:
   *  @param horizontalAngle.
   *  @param offset of buf.
   */
-  virtual bool processXYZ(float horizontalAngle,int offset);
-
-  /** 
-  *  @brief fill attributions of Cloud.
-  */
-  bool fillCloudAttr();
+  virtual bool processXYZ(float horizontalAngle, int offset, int echo);
 
   /** 
   *  @brief Publish point cloud data when conditions are met.
   *
   *  @param point_cloud_ptr Pointer to store point clouds.
   */
-  virtual bool publishCloud();
+  bool publishCloud();
   
   /** 
   *  @brief Print timestamps.
@@ -131,12 +128,9 @@ public:
   bool printTimeStamps(int offset);
 
   /** 
-  *  @brief Recieve UDP date.
-    */
-  bool getUDP();
-
-  /** 
-  *  @brief Parse UDP date to get points.
+  *  @brief Recieve UDP date and parse to get points.
+  *
+  *  @param point_cloud_ptr Pointer to store point clouds.
   */
   bool getPoints();
 
