@@ -1,10 +1,10 @@
 /************************************************
- *  Copyright (C) 2020 Tanway Technology Co., Ltd
- *  License:　BSD 3-Clause License
+ *  Copyright (C) 2019 Tanway Technology
  *
  *  Created on: 16-07-2019
  *  Edited on: 25-03-2020
  *  Author: Elodie Shan
+ *  Editer: Elodie Shan
  *
  *  UDP interface for Tanway Tensor 3D LIDARs
 **************************************************/
@@ -38,7 +38,7 @@ bool UDPNetwork::Init(std::string host_, int port_, std::string LiDARhost_, int 
     return false;
   }
 
-  bool status = ConnectValid() && SourceValid() && setLiDARMode(DualEcho_switch) && ConnectValid();
+  bool status = ConnectValid() && SourceValid() && setLiDARMode(DualEcho_switch,false,0) && ConnectValid();
 
   if (status)
     ROS_INFO("Connect with LiDAR !");
@@ -88,7 +88,7 @@ bool UDPNetwork::SourceValid()
   return true;
 }
 
-bool UDPNetwork::setLiDARMode(bool DualEcho_switch)
+bool UDPNetwork::setLiDARMode(bool DualEcho_switch, bool Filter_switch, int filter_thred)
 {
   std::string EchoMode = "Single";
   // Single echo mode and single mirror mode by default
@@ -98,6 +98,26 @@ bool UDPNetwork::setLiDARMode(bool DualEcho_switch)
   {
     send_buf[0] = 0x02;
     EchoMode = "Dual";
+    
+    if (!Filter_switch)
+    {
+      send_buf[6] == 0xFF;
+      send_buf[7] == 0xFF;
+    }
+    else
+    {
+      if (filter_thred < 20)
+      {
+        send_buf[6] == filter_high[filter_thred-1];
+        send_buf[7] == filter_low[filter_thred-1];
+      }
+      else
+      {
+        send_buf[6] == filter_high[19];
+        send_buf[7] == filter_low[19];
+      }
+    }
+
   }
   ret = sendto(sockfd, (const char*)send_buf, 16, 0, (struct sockaddr *)&caddr, sizeof(caddr));
 

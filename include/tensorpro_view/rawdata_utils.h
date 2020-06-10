@@ -1,6 +1,5 @@
 /************************************************
- *  Copyright (C) 2020 Tanway Technology Co., Ltd
- *  License:　BSD 3-Clause License
+ *  Copyright (C) 2019 Tanway Technology
  *
  *  Created on: 15-07-2019
  *  Edited on: 26-11-2019
@@ -37,6 +36,14 @@ namespace TensorData{
     addr |= ((high<<8) & 0XFF00);
     return addr;
   };
+/*
+  static inline bool InttoTwoHex(unsigned int x, unsigned char *high,unsigned char *low)
+  {
+    low =  (unsigned char) x & 0xFF;
+    high =  (unsigned char) (x>>8) & 0XFF;
+    return true;
+  }
+*/
 }
 
 #endif

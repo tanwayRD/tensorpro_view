@@ -1,6 +1,5 @@
 /************************************************
- *  Copyright (C) 2020 Tanway Technology Co., Ltd
- *  License:　BSD 3-Clause License
+ *  Copyright (C) 2019 Tanway Technology
  *
  *  Created on: 16-07-2019
  *  Author: Elodie Shan
@@ -27,6 +26,9 @@ public:
   socklen_t sockfd, ret, addrlen;
   struct sockaddr_in saddr,caddr;
 
+  unsigned char filter_high[20]={0x00,0x01,0x02,0x03,0x04,0x05,0x05,0x06,0x07,0x08,0x09,0x0A,0x0B,0x0B,0x0C,0x0D,0x0E,0x0F,0x10,0x11};
+  unsigned char filter_low[20]={0xDA,0xB4,0x8F,0x69,0x44,0x1E,0xF9,0xD3,0xAE,0x88,0x63,0x3D,0x18,0xF2,0xCD,0xA7,0x82,0x5C,0x37,0x11};
+
   char buf_[1500];
 
   std::string host;
@@ -44,8 +46,8 @@ public:
   bool SourceValid();
 
     // @brief send UDP to LiDAR to set echo mode.
-  bool setLiDARMode(bool DualEcho_switch);
-
+  bool setLiDARMode(bool DualEcho_switch, bool Filter_switch, int filter_thred);
+  
   // @brief Get the UDP data.
   int recvUDP(char* buf);
 
