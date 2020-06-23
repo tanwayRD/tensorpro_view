@@ -114,13 +114,19 @@ bool TanwayTensor::processXYZ(float horizontalAngle, int offset, int echo)
   return true;
 }
 
-bool TanwayTensor::publishCloud()
+bool TanwayTensor::fillCloudAttr()
 {
   point_cloud_ptr->width = (int) point_cloud_ptr->points.size(); //Number of points in one frame
   point_cloud_ptr->height = 1; // Whether the point cloud is orderly, 1 is disordered
   point_cloud_ptr->header.frame_id = frame_id; //Point cloud coordinate system name
   ROS_DEBUG( "Publish   num: [%d]",(int) point_cloud_ptr->points.size());
+  return true;
+}
 
+bool TanwayTensor::publishCloud()
+{
+  fillCloudAttr();
+  
   pcl::toROSMsg(*point_cloud_ptr, ros_cloud); //convert between PCL and ROS datatypes
   ros_cloud.header.stamp = ros::Time::now(); //Get ROS system time
   pubCloud.publish(ros_cloud); //Publish cloud
@@ -153,10 +159,16 @@ bool TanwayTensor::printTimeStamps(int offset){
   return true; 
 }
 
-bool TanwayTensor::getPoints(){
+bool TanwayTensor::getUDP(){
   if (UDP_.recvUDP(buf) < 0) //Recieve UDP packets
     return false;
+  
+  bool status = getPoints();
+  return status;
+}
 
+
+bool TanwayTensor::getPoints(){
   int blocks_num = 0;
 
   while (blocks_num < 20) 

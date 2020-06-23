@@ -113,11 +113,16 @@ public:
   virtual bool processXYZ(float horizontalAngle, int offset, int echo);
 
   /** 
+  *  @brief fill attributions of Cloud.
+  */
+  bool fillCloudAttr();
+
+  /** 
   *  @brief Publish point cloud data when conditions are met.
   *
   *  @param point_cloud_ptr Pointer to store point clouds.
   */
-  bool publishCloud();
+  virtual bool publishCloud();
   
   /** 
   *  @brief Print timestamps.
@@ -127,9 +132,12 @@ public:
   bool printTimeStamps(int offset);
 
   /** 
-  *  @brief Recieve UDP date and parse to get points.
-  *
-  *  @param point_cloud_ptr Pointer to store point clouds.
+  *  @brief Recieve UDP date.
+    */
+  bool getUDP();
+
+  /** 
+  *  @brief Parse UDP date to get points.
   */
   bool getPoints();
 
