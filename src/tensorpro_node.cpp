@@ -27,7 +27,6 @@ int main(int argc, char** argv) {
   ROS_INFO( "tensorpro viewer for ROS" );
   ROS_INFO( "Version 1.1.7" );
   ROS_INFO( "Update Date: 2021/01/22\n" );
-
   ROS_INFO( "View in rviz;");
   ROS_INFO( "topic= tensorpro_cloud and fixed frame= TanwayTP");
 
